@@ -7,35 +7,17 @@ import datetime
 import argparse
 
 def dump_tweets(api, screen_name):
+
     # Twitter only allows access to a users most recent 3240 tweets with this method
+    tweets = []
+    for p in tweepy.Cursor(api.user_timeline, count=200).pages():
+        # seems slower: 
+        #tweets.extend([{'id':t.id, 'created_at':t.created_at, 'text':t.text} for t in p])
+        for t in p:
+            tweets.append({'id':t.id, 'created_at':t.created_at, 'text':t.text})
 
-    alltweets = []
+    return tweets
 
-    # Make initial request for most recent tweets (200 is the maximum allowed)
-    new_tweets = api.user_timeline(screen_name = screen_name,count=200)
-
-    # Save most recent tweets
-    alltweets.extend(new_tweets)
-
-    # Save the id of the oldest tweet less one
-    oldest = alltweets[-1].id - 1
-
-    # Keep grabbing tweets until there are no tweets left to grab
-    while len(new_tweets) > 0:
-        #print("getting tweets before {}".format(oldest), file=sys.stderr)
-
-        # All subsequent requests use the max_id param to prevent duplicates
-        new_tweets = api.user_timeline(screen_name = screen_name,count=200,max_id=oldest)
-
-        # Save most recent tweets
-        alltweets.extend(new_tweets)
-
-        # Update the id of the oldest tweet less one
-        oldest = alltweets[-1].id - 1
-
-        print("Downloaded {:4} tweets".format(len(alltweets)), file=sys.stderr)
-
-    return [{'id':tweet.id_str, 'created_at':tweet.created_at, 'text':tweet.text} for tweet in alltweets]
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser()

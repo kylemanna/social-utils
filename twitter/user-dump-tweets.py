@@ -10,11 +10,8 @@ def dump_tweets(api, screen_name):
 
     # Twitter only allows access to a users most recent 3240 tweets with this method
     tweets = []
-    for p in tweepy.Cursor(api.user_timeline, count=200).pages():
-        # seems slower: 
-        #tweets.extend([{'id':t.id, 'created_at':t.created_at, 'text':t.text} for t in p])
-        for t in p:
-            tweets.append({'id':t.id, 'created_at':t.created_at, 'text':t.text})
+    for t in tweepy.Cursor(api.user_timeline, count=200).items():
+        tweets.append({'id':t.id, 'created_at':t.created_at, 'text':t.text})
 
     return tweets
 

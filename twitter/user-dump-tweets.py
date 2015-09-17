@@ -6,13 +6,8 @@ import sys
 import datetime
 import argparse
 
-def dump_tweets(cred, screen_name):
+def dump_tweets(api, screen_name):
     # Twitter only allows access to a users most recent 3240 tweets with this method
-
-    # Authorize twitter, initialize tweepy
-    auth = tweepy.OAuthHandler(cred['consumer_key'], cred['consumer_secret'])
-    auth.set_access_token(cred['access_key'], cred['access_secret'])
-    api = tweepy.API(auth)
 
     alltweets = []
 
@@ -59,6 +54,11 @@ if __name__ == '__main__':
     with open('credentials.json', 'r') as fp:
         cred = json.load(fp)
 
+    # Authorize twitter, initialize tweepy
+    auth = tweepy.OAuthHandler(cred['consumer_key'], cred['consumer_secret'])
+    auth.set_access_token(cred['access_key'], cred['access_secret'])
+    api = tweepy.API(auth)
+
     date_handler = lambda obj: (
             obj.isoformat()
             if isinstance(obj, datetime.datetime)
@@ -66,4 +66,4 @@ if __name__ == '__main__':
             else None
             )
 
-    print(json.dumps(dump_tweets(cred, args.screen_name), default=date_handler))
+    print(json.dumps(dump_tweets(api, args.screen_name), default=date_handler))

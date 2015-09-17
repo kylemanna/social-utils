@@ -31,7 +31,8 @@ def dump_friends(api):
             'url':u.url,
             'location':u.location,
             'followers_count':u.followers_count,
-            'friends_count':u.friends_count
+            'friends_count':u.friends_count,
+            'statuses_count':u.statuses_count
             })
 
     return friends
